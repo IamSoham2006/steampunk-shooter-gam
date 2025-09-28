@@ -2,11 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
-[context.production.environment]
-  NODE_VERSION = "18" # or "20"
-  NODE_ENV = "production"
+[build.environment]
+  NODE_VERSION = "22.11.0"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
