@@ -28,9 +28,9 @@ export function Game() {
     maxAmmo: 100,
     gameOver: false,
     gameWon: false,
-  isPaused: false,
-  muted: false,
-  sfxMuted: false,
+    isPaused: false,
+    muted: false,
+    sfxMuted: false,
     currentLevel: 1,
     timeLeft: LEVEL_DURATION,
     totalScore: 0,
@@ -51,10 +51,10 @@ export function Game() {
     health: 100,
     maxHealth: 100,
     gameOver: false,
-  gameWon: false,
-  isPaused: false,
-  muted: false,
-  sfxMuted: false,
+    gameWon: false,
+    isPaused: false,
+    muted: false,
+    sfxMuted: false,
     armor: 0,
     currentLevel: 1,
     totalScore: 0,
@@ -70,7 +70,7 @@ export function Game() {
       setUIState(prev => ({ ...prev, sfxMuted: initialSfxMuted }));
       // store in gameStateRef for quick checks
       (gameStateRef.current as any).sfxMuted = initialSfxMuted;
-    } catch (e) {}
+    } catch (e) { }
   }, []);
 
   // initialize muted from localStorage if available
@@ -132,7 +132,7 @@ export function Game() {
     const gameState = gameStateRef.current as any;
     const newMuted = typeof muted === 'boolean' ? muted : !Boolean(gameState.sfxMuted);
     gameState.sfxMuted = newMuted;
-    try { localStorage.setItem('sp_sfx_muted', newMuted ? 'true' : 'false'); } catch (e) {}
+    try { localStorage.setItem('sp_sfx_muted', newMuted ? 'true' : 'false'); } catch (e) { }
     // no Howler muting here since SFX are synth-generated or managed separately
     setUIState(prev => ({ ...prev, /* sfx not part of UIState currently */ }));
   }, []);
@@ -140,9 +140,9 @@ export function Game() {
   // Collision detection utility
   const checkCollision = useCallback((rect1: any, rect2: any) => {
     return rect1.x < rect2.x + rect2.width &&
-           rect1.x + rect1.width > rect2.x &&
-           rect1.y < rect2.y + rect2.height &&
-           rect1.y + rect1.height > rect2.y;
+      rect1.x + rect1.width > rect2.x &&
+      rect1.y < rect2.y + rect2.height &&
+      rect1.y + rect1.height > rect2.y;
   }, []);
 
   // Handle keyboard input
@@ -170,6 +170,37 @@ export function Game() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [togglePause, jumpToLevel]);
+
+  // *** START: VIEWPORT FIX IMPLEMENTATION ***
+  /**
+   * Calculates 1% of the true viewport height (window.innerHeight) and 
+   * sets the CSS variable --vh on the root element. This bypasses mobile
+   * browser inconsistencies (like the address bar expanding/collapsing)
+   * when using the native vh unit in CSS.
+   */
+  useEffect(() => {
+    const setViewportVariables = () => {
+      // Calculate 1% of the window's inner height in pixels
+      const vh = window.innerHeight * 0.01;
+      // Set the --vh CSS variable on the root element
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    // 1. Run once on mount
+    setViewportVariables();
+
+    // 2. Re-run whenever the window resizes or device orientation changes
+    window.addEventListener('resize', setViewportVariables);
+    window.addEventListener('orientationchange', setViewportVariables);
+
+    // 3. Cleanup function: remove event listeners when the component unmounts
+    return () => {
+      window.removeEventListener('resize', setViewportVariables);
+      window.removeEventListener('orientationchange', setViewportVariables);
+    };
+  }, []);
+  // *** END: VIEWPORT FIX IMPLEMENTATION ***
+
 
   // Audio: background music using Howler via useSound
   // Memoize the sounds mapping so useSound's effect doesn't re-run on every render
@@ -203,7 +234,7 @@ export function Game() {
   }, [ensurePlayBgm]);
 
   // Mobile touch handlers that map to keys
-  const onTouchStartDirection = useCallback((dir: 'up'|'down'|'left'|'right') => {
+  const onTouchStartDirection = useCallback((dir: 'up' | 'down' | 'left' | 'right') => {
     const keys = gameStateRef.current.keys;
     if (dir === 'up') { keys['ArrowUp'] = true; keys['w'] = true; }
     if (dir === 'down') { keys['ArrowDown'] = true; keys['s'] = true; }
@@ -211,7 +242,7 @@ export function Game() {
     if (dir === 'right') { keys['ArrowRight'] = true; keys['d'] = true; }
   }, []);
 
-  const onTouchEndDirection = useCallback((dir: 'up'|'down'|'left'|'right') => {
+  const onTouchEndDirection = useCallback((dir: 'up' | 'down' | 'left' | 'right') => {
     const keys = gameStateRef.current.keys;
     if (dir === 'up') { keys['ArrowUp'] = false; keys['w'] = false; }
     if (dir === 'down') { keys['ArrowDown'] = false; keys['s'] = false; }
@@ -224,22 +255,22 @@ export function Game() {
     keys[' '] = down; keys['Space'] = down;
     if (down) {
       // also try to play SFX via current logic when a shot is created
-      try { if (!(gameStateRef.current as any).sfxMuted) playSound('synth:pew'); } catch (e) {}
+      try { if (!(gameStateRef.current as any).sfxMuted) playSound('synth:pew'); } catch (e) { }
     }
   }, [playSound]);
 
   // Keep BGM in sync with pause / mute UI state
   useEffect(() => {
     if (uiState.muted) {
-      try { muteAll(true); } catch (e) {}
+      try { muteAll(true); } catch (e) { }
       return;
     }
 
     // unmute
-    try { muteAll(false); } catch (e) {}
+    try { muteAll(false); } catch (e) { }
 
     if (uiState.isPaused) {
-      try { pauseSound('bgm'); } catch (e) {}
+      try { pauseSound('bgm'); } catch (e) { }
     } else {
       // resume or start
       try {
@@ -248,7 +279,7 @@ export function Game() {
         } else {
           playSound('bgm', { loop: true });
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [uiState.isPaused, uiState.muted, muteAll, pauseSound, playSound]);
 
@@ -264,7 +295,7 @@ export function Game() {
     // Higher levels spawn more challenging enemies
     const randomNumber = Math.random();
     let enemy: Enemy;
-    
+
     if (level <= 2) {
       // Early levels: more basic enemies
       if (randomNumber < 0.4) {
@@ -303,11 +334,11 @@ export function Game() {
         enemy = new LuckyFish(game);
       }
     }
-    
+
     // Scale enemy health with level
     const healthMultiplier = 1 + (level - 1) * 0.3;
     enemy.lives = Math.floor(enemy.lives * healthMultiplier);
-    
+
     return enemy;
   }, []);
 
@@ -323,8 +354,8 @@ export function Game() {
       maxHealth: gameState.player.maxHealth,
       gameOver: gameState.gameOver,
       gameWon: gameState.gameWon,
-  isPaused: gameState.isPaused,
-  muted: gameState.muted,
+      isPaused: gameState.isPaused,
+      muted: gameState.muted,
       sfxMuted: (gameState as any).sfxMuted || false,
       armor: gameState.player.armor,
       currentLevel: gameState.currentLevel,
@@ -337,7 +368,7 @@ export function Game() {
   // Game update loop
   const updateGame = useCallback((deltaTime: number) => {
     const gameState = gameStateRef.current;
-    
+
     if (gameState.gameOver) return;
 
     // Handle level transition
@@ -357,17 +388,17 @@ export function Game() {
 
     // Update timer
     gameState.timeLeft = Math.max(0, gameState.timeLeft - deltaTime);
-    
+
     // Check level completion
     if (gameState.timeLeft <= 0) {
       // Level completed
       gameState.totalScore += gameState.score;
-      
+
       if (gameState.currentLevel >= MAX_LEVELS) {
         // Game won - all levels completed
         gameState.gameOver = true;
         gameState.gameWon = true;
-        
+
         // Force immediate UI state update for game won
         setUIState(prevState => ({
           ...prevState,
@@ -375,7 +406,7 @@ export function Game() {
           gameWon: true,
           totalScore: gameState.totalScore
         }));
-        
+
         updateUIState();
         return;
       } else {
@@ -386,14 +417,14 @@ export function Game() {
         gameState.currentLevel++;
         gameState.timeLeft = LEVEL_DURATION;
         gameState.score = 0; // Reset level score
-        
+
         // Clear enemies and projectiles for new level
         gameState.enemies = [];
         gameState.projectiles = [];
-        
+
         // Heal player partially between levels
         gameState.player.heal(30);
-        
+
         updateUIState();
         return;
       }
@@ -404,7 +435,7 @@ export function Game() {
       gameState.gameOver = true;
       gameState.gameWon = false;
       gameState.totalScore += gameState.score;
-      
+
       // Force immediate UI state update for game over
       setUIState(prevState => ({
         ...prevState,
@@ -413,7 +444,7 @@ export function Game() {
         health: 0,
         totalScore: gameState.totalScore
       }));
-      
+
       updateUIState();
       return;
     }
@@ -457,12 +488,12 @@ export function Game() {
 
     // Spawn enemies with level-based difficulty
     gameState.enemySpawnTimer = (gameState.enemySpawnTimer || 0) + deltaTime;
-    
+
     // Spawn rate gets faster with each level and over time within level
     const baseSpawnRate = Math.max(1000, 2500 - (gameState.currentLevel - 1) * 300);
     const timeBasedReduction = (LEVEL_DURATION - gameState.timeLeft) / 20;
     const spawnRate = Math.max(800, baseSpawnRate - timeBasedReduction);
-    
+
     if (gameState.enemySpawnTimer >= spawnRate) {
       newEnemies.push(spawnEnemy(gameState.currentLevel));
       gameState.enemySpawnTimer = 0;
@@ -519,7 +550,7 @@ export function Game() {
               // Enemy destroyed
               const levelMultiplier = 1 + (gameState.currentLevel - 1) * 0.2;
               gameState.score += Math.floor(enemy.score * levelMultiplier);
-              
+
               // Handle special enemy types
               if (enemy.type === 'hive') {
                 // If a HiveWhale is destroyed, spawn 5 drones
@@ -537,7 +568,7 @@ export function Game() {
                   newEnemies.push(drone);
                 }
               }
-              
+
               newParticles.push(...createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2));
               newEnemies.splice(j, 1);
             } else {
@@ -566,7 +597,7 @@ export function Game() {
     for (let i = newParticles.length - 1; i >= 0; i--) {
       const particle = newParticles[i];
       particle.update(deltaTime);
-      
+
       if (particle.isDead()) {
         newParticles.splice(i, 1);
       }
@@ -589,7 +620,7 @@ export function Game() {
           }
           newParticles.push(...createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2));
         }
-        
+
         // Remove enemy after collision
         newEnemies.splice(i, 1);
       }
@@ -603,7 +634,7 @@ export function Game() {
     if (Math.floor(Date.now() / 100) % 2 === 0) {
       updateUIState();
     }
-  }, [checkCollision, spawnEnemy, updateUIState]);
+  }, [checkCollision, spawnEnemy, updateUIState, playSound]);
 
   // Render game
   const renderGame = useCallback(() => {
@@ -614,7 +645,7 @@ export function Game() {
     if (!ctx) return;
 
     const gameState = gameStateRef.current;
-    
+
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     // 1. Draw the background layers (behind the player)
@@ -652,9 +683,9 @@ export function Game() {
       maxAmmo: 100,
       gameOver: false,
       gameWon: false,
-  isPaused: false,
-  muted: false,
-    sfxMuted: false,
+      isPaused: false,
+      muted: gameStateRef.current.muted, // Keep previous audio state
+      sfxMuted: gameStateRef.current.sfxMuted, // Keep previous audio state
       currentLevel: 1,
       timeLeft: LEVEL_DURATION,
       totalScore: 0,
@@ -695,46 +726,64 @@ export function Game() {
   }, [uiState.gameOver]);
 
   return (
-    <div className="relative w-full h-full bg-black flex items-center justify-center">
-      <div className="relative">
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_WIDTH}
-          height={CANVAS_HEIGHT}
-          className="border border-gray-600 max-w-full max-h-full"
-          style={{ 
-            imageRendering: 'pixelated',
-            width: 'auto',
-            height: 'auto',
-            maxWidth: '100%',
-            maxHeight: '100vh'
-          }}
-        />
-        <UI
-          score={uiState.score}
-          timeLeft={uiState.timeLeft}
-          health={uiState.health}
-          maxHealth={uiState.maxHealth}
-          gameOver={uiState.gameOver}
-          gameWon={uiState.gameWon}
-          isPaused={uiState.isPaused}
-          onTogglePause={togglePause}
-          onJumpToLevel={jumpToLevel}
-          armor={uiState.armor}
-          currentLevel={uiState.currentLevel}
-          totalScore={uiState.totalScore}
-          levelComplete={uiState.levelComplete}
-          levelTransition={uiState.levelTransition}
-          onRestart={restartGame}
-          muted={uiState.muted}
-          onToggleMute={toggleMute}
-          sfxMuted={uiState.sfxMuted}
-          onToggleSfx={toggleSfx}
-          onTouchStartDirection={onTouchStartDirection}
-          onTouchEndDirection={onTouchEndDirection}
-          onTouchShoot={onTouchShoot}
-        />
-      </div>
+    // START OF MODIFIED JSX
+
+    // 1. OUTER CONTAINER: Use the JS-calculated height (h-[calc(var(--vh)*100)])
+    // to ensure full-screen on mobile, and apply the centering logic here.
+    <div
+      className="relative w-full h-[calc(var(--vh)*100)] bg-black flex items-center justify-center overflow-hidden"
+    >
+      {/* 2. REMOVE THE UNNECESSARY NESTED <div className="relative"> WRAPPER.
+        The canvas will now scale directly within the full-viewport container.
+      */}
+
+      <canvas
+        ref={canvasRef}
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
+
+        // 3. UPDATED CLASSES: 
+        // 'size-full' makes the canvas try to fill the entire container.
+        // 'object-contain' is the KEY to ensure it scales while preserving aspect ratio (letterboxing).
+        className="border border-gray-600 size-full object-contain"
+
+        style={{
+          imageRendering: 'pixelated',
+          // 4. REMOVE conflicting size styles, as they're now handled by Tailwind.
+          // The CSS logic is now: size-full object-contain
+        }}
+      />
+
+      {/* 5. UI COMPONENT PLACEMENT:
+        The <UI> component must remain a sibling to the <canvas> 
+        and its internal absolute positioning will now be relative to the full-viewport container.
+      */}
+      <UI
+        score={uiState.score}
+        timeLeft={uiState.timeLeft}
+        ammo={uiState.ammo}
+        maxAmmo={uiState.maxAmmo}
+        health={uiState.health}
+        maxHealth={uiState.maxHealth}
+        gameOver={uiState.gameOver}
+        gameWon={uiState.gameWon}
+        isPaused={uiState.isPaused}
+        onTogglePause={togglePause}
+        onJumpToLevel={jumpToLevel}
+        armor={uiState.armor} // Ensure this is consistent (player.armor is on gameStateRef, but you pass uiState to UI)
+        currentLevel={uiState.currentLevel}
+        totalScore={uiState.totalScore}
+        levelComplete={uiState.levelComplete}
+        levelTransition={uiState.levelTransition}
+        onRestart={restartGame}
+        muted={uiState.muted}
+        onToggleMute={toggleMute}
+        sfxMuted={uiState.sfxMuted}
+        onToggleSfx={toggleSfx}
+        onTouchStartDirection={onTouchStartDirection}
+        onTouchEndDirection={onTouchEndDirection}
+        onTouchShoot={onTouchShoot}
+      />
     </div>
   );
 }
