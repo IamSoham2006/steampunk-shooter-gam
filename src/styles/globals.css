@@ -1,6 +1,23 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* * VITAL FULL-SCREEN VARIABLES 
+   * --vh: Will be set by JavaScript (1% of window.innerHeight in px).
+   * --dvh/--dvw: Modern CSS dynamic units (with 100vh/100vw fallback).
+   */
+  --vh: 1vh;
+  /* Base value, will be overridden by JS */
+  --vw: 1vw;
+  /* Base value, will be overridden by JS */
+  --dvh: 100vh;
+  --dvw: 100vw;
+
+  /* Use modern units if supported (better mobile behavior) */
+  @supports (height: 100dvh) {
+    --dvh: 100dvh;
+    --dvw: 100dvw;
+  }
+
   --font-size: 16px;
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
@@ -122,6 +139,21 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+
+  /* * CRITICAL FULL-SCREEN/OVERFLOW FIX: 
+   * Use the JS-managed --vh for consistent full height, and hide overflow.
+   * NOTE: The outer <div> in your Game.tsx should use h-full, which 
+   * inherits this 100vh value.
+   */
+  html,
+  body,
+  #root {
+    /* Use JS calculated height for reliability */
+    height: calc(var(--vh) * 100);
+    width: var(--dvw);
+    /* Essential to prevent scrolling/jiggle on all devices */
+    overflow: hidden;
   }
 
   body {
