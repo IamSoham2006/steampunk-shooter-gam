@@ -3,7 +3,6 @@
 
 A retro-styled steampunk space shooter game built with React, TypeScript, and Tailwind CSS. Fight through 5 increasingly difficult levels as a mechanical seahorse defending against alien threats.
 
-Original design inspiration: https://www.figma.com/design/Ebu4rnrcAjTMr2NR50xVaa/Steampunk-Shooter-Game
 
 ## Features
 
