@@ -1001,3 +1001,32 @@ html {
   syntax: "*";
   inherits: false
 }
+
+/* Prevent page scrolling for game */
+html, body {
+  overflow: hidden !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+}
+
+/* Prevent touch scrolling on mobile */
+body {
+  touch-action: none !important;
+  -ms-touch-action: none !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Make sure the root container takes full space */
+#root {
+  height: 100vh !important;
+  width: 100vw !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+}

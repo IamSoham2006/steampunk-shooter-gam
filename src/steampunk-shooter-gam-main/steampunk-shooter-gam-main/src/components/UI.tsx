@@ -177,8 +177,8 @@ export function UI({
 
         {/* Bottom HUD removed (ammo) */}
 
-        {/* Mobile controls - only show on small screens */}
-        <div className="md:hidden">
+        {/* Mobile controls - now visible on all screen sizes */}
+        <div>
           {/* Orientation overlay when portrait */}
           {isPortrait && (
             <div className="absolute inset-0 bg-black/90 z-50 flex items-center justify-center pointer-events-auto">
@@ -189,9 +189,9 @@ export function UI({
             </div>
           )}
 
-          {/* On-screen D-Pad & Shoot - anchored bottom */}
+          {/* On-screen D-Pad & Shoot - frontmost layer over game */}
           {!isPortrait && (
-            <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between pointer-events-none z-40">
+            <div className="absolute bottom-20 left-4 right-4 flex items-end justify-between pointer-events-none z-50">
               {/* Left D-pad: 3x3 grid with clear positions */}
               <div className="pointer-events-auto">
                 <div className="w-56 h-56 grid grid-cols-3 grid-rows-3 gap-3 touch-none">
@@ -199,55 +199,29 @@ export function UI({
                   <button
                     aria-label="Move up"
                     title="Up"
-                    className={`col-start-2 row-start-1 flex items-center justify-center w-16 h-16 md:w-18 md:h-18 rounded-full bg-black/70 border border-white/10 text-white transform-gpu drop-shadow-lg touch-manipulation ${pressed['up'] ? 'ring-2 ring-yellow-400 scale-95' : ''}`}
+                    className={`col-start-2 row-start-1 flex items-center justify-center w-16 h-16 md:w-18 md:h-18 rounded-full bg-black/30 border border-white/20 text-white transform-gpu drop-shadow-sm touch-manipulation hover:bg-black/50 ${pressed['up'] ? 'ring-2 ring-yellow-400 scale-95 bg-black/60' : ''}`}
                     onPointerDown={(e) => handlePointerDown(e, () => onTouchStartDirection?.('up'), 'up')}
                     onPointerUp={(e) => handlePointerUp(e, () => onTouchEndDirection?.('up'), 'up')}
                     onPointerCancel={(e) => handlePointerUp(e, () => onTouchEndDirection?.('up'), 'up')}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <svg width="50" height="50" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                       <path d="M12 5L5 13h14L12 5z" fill="#FFFFFF" stroke="rgba(0,0,0,0.25)" strokeWidth="0.5" />
                     </svg>
                   </button>
                   <div className="col-start-3 row-start-1" />
-
-                  <button
-                    aria-label="Move left"
-                    title="Left"
-                    className={`col-start-1 row-start-2 flex items-center justify-center w-16 h-16 md:w-18 md:h-18 rounded-full bg-black/70 border border-white/10 text-white transform-gpu drop-shadow-lg touch-manipulation ${pressed['left'] ? 'ring-2 ring-yellow-400 scale-95' : ''}`}
-                    onPointerDown={(e) => handlePointerDown(e, () => onTouchStartDirection?.('left'), 'left')}
-                    onPointerUp={(e) => handlePointerUp(e, () => onTouchEndDirection?.('left'), 'left')}
-                    onPointerCancel={(e) => handlePointerUp(e, () => onTouchEndDirection?.('left'), 'left')}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                      <path d="M19 12L7 5v14l12-7z" fill="#FFFFFF" stroke="rgba(0,0,0,0.25)" strokeWidth="0.5" />
-                    </svg>
-                  </button>
-
+                  <div className="col-start-1 row-start-2" />
                   <div className="col-start-2 row-start-2" />
-
-                  <button
-                    aria-label="Move right"
-                    title="Right"
-                    className={`col-start-3 row-start-2 flex items-center justify-center w-16 h-16 md:w-18 md:h-18 rounded-full bg-black/70 border border-white/10 text-white transform-gpu drop-shadow-lg touch-manipulation ${pressed['right'] ? 'ring-2 ring-yellow-400 scale-95' : ''}`}
-                    onPointerDown={(e) => handlePointerDown(e, () => onTouchStartDirection?.('right'), 'right')}
-                    onPointerUp={(e) => handlePointerUp(e, () => onTouchEndDirection?.('right'), 'right')}
-                    onPointerCancel={(e) => handlePointerUp(e, () => onTouchEndDirection?.('right'), 'right')}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                      <path d="M5 12l12 7V5l-12 7z" fill="#FFFFFF" stroke="rgba(0,0,0,0.25)" strokeWidth="0.5" />
-                    </svg>
-                  </button>
-
+                  <div className="col-start-3 row-start-2" />
                   <div className="col-start-1 row-start-3" />
                   <button
                     aria-label="Move down"
                     title="Down"
-                    className={`col-start-2 row-start-3 flex items-center justify-center w-16 h-16 md:w-18 md:h-18 rounded-full bg-black/70 border border-white/10 text-white transform-gpu drop-shadow-lg touch-manipulation ${pressed['down'] ? 'ring-2 ring-yellow-400 scale-95' : ''}`}
+                    className={`col-start-2 row-start-3 flex items-center justify-center w-16 h-16 md:w-18 md:h-18 rounded-full bg-black/30 border border-white/20 text-white transform-gpu drop-shadow-sm touch-manipulation hover:bg-black/50 ${pressed['down'] ? 'ring-2 ring-yellow-400 scale-95 bg-black/60' : ''}`}
                     onPointerDown={(e) => handlePointerDown(e, () => onTouchStartDirection?.('down'), 'down')}
                     onPointerUp={(e) => handlePointerUp(e, () => onTouchEndDirection?.('down'), 'down')}
                     onPointerCancel={(e) => handlePointerUp(e, () => onTouchEndDirection?.('down'), 'down')}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <svg width="50" height="50" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                       <path d="M12 19l7-8H5l7 8z" fill="#FFFFFF" stroke="rgba(0,0,0,0.25)" strokeWidth="0.5" />
                     </svg>
                   </button>
@@ -258,7 +232,7 @@ export function UI({
               {/* Right controls: FIRE */}
               <div className="pointer-events-auto flex flex-col items-end gap-3">
                 <button
-                  className={`w-28 h-28 rounded-full bg-red-600 text-white text-lg font-bold shadow-lg ${pressed['fire'] ? 'scale-95' : ''}`}
+                  className={`w-20 h-20 rounded-full bg-red-600/80 text-white text-lg font-bold shadow-md hover:bg-red-600 ${pressed['fire'] ? 'scale-95 bg-red-700' : ''}`}
                   onPointerDown={(e) => handlePointerDown(e, () => onTouchShoot?.(true), 'fire')}
                   onPointerUp={(e) => handlePointerUp(e, () => onTouchShoot?.(false), 'fire')}
                   onPointerCancel={(e) => handlePointerUp(e, () => onTouchShoot?.(false), 'fire')}

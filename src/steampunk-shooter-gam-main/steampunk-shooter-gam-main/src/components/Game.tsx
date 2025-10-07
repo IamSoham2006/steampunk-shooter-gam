@@ -9,8 +9,8 @@ import { Background } from '../logic/Background.ts';
 import { UI } from './UI.tsx';
 import useSound from '../hooks/useSound.ts';
 
-const CANVAS_WIDTH = 1024;
-const CANVAS_HEIGHT = 576;
+const CANVAS_WIDTH = 1000;
+const CANVAS_HEIGHT = 500;
 const LEVEL_DURATION = 120000; // 2 minutes per level
 const MAX_LEVELS = 5;
 const TARGET_SCORE_PER_LEVEL = 500;
